@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mousespeed.js Demo</title>
+  <style>
+    #classic, #mousespeed {
+      float: left;
+      width: 200px;
+      height: 200px;
+      line-height: 200px;
+      margin: 100px;
+      text-align: center;
+    }
+    #classic {
+      background: yellow;
+    }
+    #mousespeed {
+      background: green;
+    }
+    div.active {
+      outline: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+  <div id="classic">Classic mouseover</div>
+  <div id="mousespeed">MouseSpeed.isSlow()</div>
+
+  <script src="mousespeed.js"></script>
+  <script>
+    // classic approach
+    document.getElementById('classic').addEventListener('mouseover', function (e) {
+      e.currentTarget.classList.add('active');
+    });
+    document.getElementById('classic').addEventListener('mouseout', function (e) {
+      e.currentTarget.classList.remove('active');
+    });
+
+    // mousespeed
+    document.getElementById('mousespeed').addEventListener('mousemove', function (e) {
+      if (!e.currentTarget.classList.contains('active') && MouseSpeed.isSlow()) {
+        e.currentTarget.classList.add('active');
+      }
+    });
+    document.getElementById('mousespeed').addEventListener('mouseout', function (e) {
+      e.currentTarget.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
