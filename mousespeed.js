@@ -1,6 +1,14 @@
 (function (global) {
 
-  var mouseRefresh = 20; // max ~50 Hz refresh rate
+  var requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            function( callback ){
+              window.setTimeout(callback, 1000 / 60);
+            };
+  })();
+
   var mouse = {
     x: 0,
     y: 0,
@@ -21,8 +29,7 @@
     mouse.lastDistance += Math.sqrt(Math.pow(mouse.x-mouse.lastX, 2) + Math.pow(mouse.y-mouse.lastY, 2));
   });
 
-  // TODO requestAnimationFrame
-  var mouseInterval = setInterval(function () {
+  var mouseInterval = function () {
     var now = new Date().getTime();
 
     if (mouse.lastTime && mouse.lastTime !== now) {
@@ -31,7 +38,9 @@
     }
 
     mouse.lastTime = now;
-  }, mouseRefresh);
+    requestAnimFrame(mouseInterval);
+  };
+  mouseInterval();
 
   global.MouseSpeed = mouse;
 }(window));
