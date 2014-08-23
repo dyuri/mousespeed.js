@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Mousespeed.js Demo</title>
   <style>
-    #classic, #mousespeed {
+    #classic, #mousespeedis, #mousespeedifs, #mousespeedover {
       float: left;
       width: 200px;
       height: 200px;
@@ -15,17 +15,25 @@
     #classic {
       background: yellow;
     }
-    #mousespeed {
+    #mousespeedis {
       background: green;
     }
+    #mousespeedifs {
+      background: blue;
+    }
+    #mousespeedover {
+      background: cyan;
+    }
     div.active {
-      outline: 1px solid red;
+      outline: 10px solid red;
     }
   </style>
 </head>
 <body>
   <div id="classic">Classic mouseover</div>
-  <div id="mousespeed">MouseSpeed.isSlow()</div>
+  <div id="mousespeedis">MouseSpeed.isSlow()</div>
+  <div id="mousespeedifs">MouseSpeed.ifSlow()</div>
+  <div id="mousespeedover">MouseSpeed.over()</div>
 
   <script src="mousespeed.js"></script>
   <script>
@@ -37,15 +45,37 @@
       e.currentTarget.classList.remove('active');
     });
 
-    // mousespeed
-    document.getElementById('mousespeed').addEventListener('mousemove', function (e) {
+    // mousespeed - isSlow()
+    document.getElementById('mousespeedis').addEventListener('mousemove', function (e) {
       if (!e.currentTarget.classList.contains('active') && MouseSpeed.isSlow()) {
         e.currentTarget.classList.add('active');
       }
     });
-    document.getElementById('mousespeed').addEventListener('mouseout', function (e) {
+    document.getElementById('mousespeedis').addEventListener('mouseout', function (e) {
       e.currentTarget.classList.remove('active');
     });
+
+    // mousespeed - ifSlow()
+    document.getElementById('mousespeedifs').addEventListener('mousemove', function (e) {
+      if (!e.currentTarget.classList.contains('active')) {
+        MouseSpeed.ifSlow(function (box) {
+          box.classList.add('active');
+        }, this, [e.currentTarget]);
+      }
+    });
+    document.getElementById('mousespeedifs').addEventListener('mouseout', function (e) {
+      e.currentTarget.classList.remove('active');
+    });
+
+    // mousespeed - over()
+    MouseSpeed.over(document.getElementById('mousespeedover'),
+      function (e) {
+        e.currentTarget.classList.add('active');
+      },
+      function (e) {
+        e.currentTarget.classList.remove('active');
+      }
+    );
   </script>
 </body>
 </html>
