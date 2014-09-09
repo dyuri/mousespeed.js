@@ -1,5 +1,6 @@
 (function (global) {
 
+  // requestAnimationFrame polyfill
   var requestAnimFrame = (function(){
     return  window.requestAnimationFrame       ||
             window.webkitRequestAnimationFrame ||
@@ -8,6 +9,28 @@
               window.setTimeout(callback, 1000 / 60);
             };
   })();
+
+  // CustomEvent polyfill
+  if (!window.CustomEvent) {
+    try {
+      (function () {
+        function CustomEvent (event, params) {
+          params = params || {
+            bubbles: false,
+            cancelable: false,
+            detail: undefined
+          };
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+          return evt;
+        }
+
+        CustomEvent.prototype = window.Event.prototype;
+
+        window.CustomEvent = CustomEvent;
+      }());
+    } catch (e) {}
+  }
 
   var ifSlowCallbacks = [];
   var debug = function (message) {
@@ -43,8 +66,7 @@
         });
       }
     },
-    // complete mouseover/mouseout replacement
-    // TODO event delegation
+    // complete mouseover/mouseout replacement (for old browsers, use mouseslow event instead)
     over: function (el, overCB, outCB) {
       el.addEventListener('mouseover', function (e) {
         el.setAttribute(mouse.dataAttr, 'over');
@@ -81,12 +103,30 @@
     mouse.lastDistance += Math.sqrt(Math.pow(mouse.x-mouse.lastX, 2) + Math.pow(mouse.y-mouse.lastY, 2));
   });
 
+  document.addEventListener("mouseover", function(e) {
+    mouse.overEl = e.target;
+  });
+
   var mouseInterval = function () {
     var now = new Date().getTime();
 
     if (mouse.lastTime && mouse.lastTime !== now) {
       mouse.speed = mouse.lastDistance / (now - mouse.lastTime) * 1000;
       mouse.lastDistance = 0;
+    }
+
+    // dispatch mouseslow event
+    if (window.CustomEvent && mouse.isSlow() && mouse.overEl && mouse.overEl !== mouse.lastOverEl) {
+      mouse.lastOverEl = mouse.overEl;
+
+      var event = new CustomEvent("mouseslow", {
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          mouse: mouse
+        }
+      });
+      mouse.overEl.dispatchEvent(event);
     }
 
     if (ifSlowCallbacks.length) {
