@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <title>Mousespeed.js Demo</title>
   <style>
-    #classic, #mousespeedis, #mousespeedifs, #mousespeedover {
+    #classic, #mousespeedis, #mousespeedifs, #mousespeedover, #mousespeedslow {
       float: left;
       width: 200px;
       height: 200px;
       line-height: 200px;
-      margin: 100px;
+      margin: 50px;
       text-align: center;
     }
     #classic {
@@ -24,6 +24,9 @@
     #mousespeedover {
       background: cyan;
     }
+    #mousespeedslow {
+      background: magenta;
+    }
     div.active {
       outline: 10px solid red;
     }
@@ -34,6 +37,7 @@
   <div id="mousespeedis">MouseSpeed.isSlow()</div>
   <div id="mousespeedifs">MouseSpeed.ifSlow()</div>
   <div id="mousespeedover">MouseSpeed.over()</div>
+  <div id="mousespeedslow">mouseslow event</div>
 
   <script src="mousespeed.js"></script>
   <script>
@@ -76,6 +80,15 @@
         e.currentTarget.classList.remove('active');
       }
     );
+
+    // classic approach with custom mouseslow event
+    document.getElementById('mousespeedslow').addEventListener('mouseslow', function (e) {
+      e.currentTarget.classList.add('active');
+    });
+    document.getElementById('mousespeedslow').addEventListener('mouseout', function (e) {
+      e.currentTarget.classList.remove('active');
+    });
+
   </script>
 </body>
 </html>
