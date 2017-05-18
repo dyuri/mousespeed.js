@@ -51,6 +51,8 @@
     lastTime: new Date().getTime(),
     lastDistance: 0,
     speed: 0,
+    direction: null,
+    lastDirection: null,
     slowLimit: 200, // under px/sec
     tryCallback: 2,
     dataAttr: 'data-mousespeed',
@@ -104,6 +106,8 @@
     mouse.lastY = mouse.y;
     mouse.x = e.pageX;
     mouse.y = e.pageY;
+    mouse.startX = mouse.startX || mouse.x;
+    mouse.startY = mouse.startY || mouse.y;
     mouse.lastDistance += Math.sqrt(Math.pow(mouse.x-mouse.lastX, 2) + Math.pow(mouse.y-mouse.lastY, 2));
   });
 
@@ -119,18 +123,45 @@
       mouse.lastDistance = 0;
     }
 
-    // dispatch mouseslow event
-    if (window.CustomEvent && mouse.isSlow() && mouse.overEl && mouse.overEl !== mouse.lastOverEl) {
-      mouse.lastOverEl = mouse.overEl;
-
-      var event = new CustomEvent("mouseslow", {
-        bubbles: true,
-        cancelable: true,
-        detail: {
-          mouse: mouse
+    // calculate direction of "quick" movements between slow movements
+    if (mouse.isSlow()) {
+      if (mouse.y && mouse.x && mouse.startX && mouse.startY && Math.abs(mouse.startX - mouse.x) + Math.abs(mouse.startY - mouse.y) > 10) {
+        var direction = Math.atan2(mouse.y - mouse.startY, mouse.x - mouse.startX) * 180 / Math.PI;
+        if (direction || direction === 0) {
+          mouse.direction = direction;
         }
-      });
-      mouse.overEl.dispatchEvent(event);
+        mouse.startX = mouse.x;
+        mouse.startY = mouse.y;
+      }
+    }
+
+    // dispatch mouseslow event
+    if (window.CustomEvent && mouse.isSlow() && mouse.overEl) {
+      if (mouse.overEl !== mouse.lastOverEl) {
+        mouse.lastOverEl = mouse.overEl;
+
+        var overevent = new CustomEvent("mouseoverslow", {
+          bubbles: true,
+          cancelable: true,
+          detail: {
+            mouse: mouse
+          }
+        });
+        mouse.overEl.dispatchEvent(overevent);
+      }
+
+      if (mouse.lastDirection !== mouse.direction) {
+        mouse.lastDirection = mouse.direction;
+
+        var moveevent = new CustomEvent("mousemoveslow", {
+          bubbles: true,
+          cancelable: true,
+          detail: {
+            mouse: mouse
+          }
+        });
+        mouse.overEl.dispatchEvent(moveevent);
+      }
     }
 
     if (ifSlowCallbacks.length) {
