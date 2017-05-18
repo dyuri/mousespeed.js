@@ -1,13 +1,14 @@
-(function (global) {
+"use strict";
 
+(function (global) {
   // requestAnimationFrame polyfill
   var requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            function( callback ){
-              window.setTimeout(callback, 1000 / 60);
-            };
+    return window.requestAnimationFrame ||
+           window.webkitRequestAnimationFrame ||
+           window.mozRequestAnimationFrame ||
+           function( callback ){
+             window.setTimeout(callback, 1000 / 60);
+           };
   })();
 
   // CustomEvent polyfill
@@ -18,7 +19,7 @@
           params = params || {
             bubbles: false,
             cancelable: false,
-            detail: undefined
+            detail: null
           };
           var evt = document.createEvent('CustomEvent');
           evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
@@ -29,17 +30,20 @@
 
         window.CustomEvent = CustomEvent;
       }());
-    } catch (e) {}
+    } catch (e) {
+      console.log('[mousespeed] custom event initialization failed:', e);
+    }
   }
 
   var ifSlowCallbacks = [];
+  var mouse;
   var debug = function (message) {
     if (mouse.debug) {
-      console.debug(message);
+      console.debug('[mousespeed] '+message);
     }
   };
 
-  var mouse = {
+  mouse = {
     x: 0,
     y: 0,
     lastX: 0,
@@ -68,7 +72,7 @@
     },
     // complete mouseover/mouseout replacement (for old browsers, use mouseslow event instead)
     over: function (el, overCB, outCB) {
-      el.addEventListener('mouseover', function (e) {
+      el.addEventListener('mouseover', function () {
         el.setAttribute(mouse.dataAttr, 'over');
       });
       el.addEventListener('mouseout', function (e) {
@@ -79,7 +83,7 @@
       });
       el.addEventListener('mousemove', function (e) {
         if (el.getAttribute(mouse.dataAttr) !== 'active') {
-          MouseSpeed.ifSlow(function (eData) {
+          mouse.ifSlow(function (eData) {
             if (el.getAttribute(mouse.dataAttr) === 'over') {
               el.setAttribute(mouse.dataAttr, 'active');
               overCB.apply(el, [eData]);
@@ -94,7 +98,7 @@
       });
     }
   };
-  
+
   document.addEventListener("mousemove", function(e) {
     mouse.lastX = mouse.x;
     mouse.lastY = mouse.y;
