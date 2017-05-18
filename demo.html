@@ -88,6 +88,9 @@
     document.getElementById('mousespeedslow').addEventListener('mousemoveslow', function (e) {
       console.log('mouse is slow over target, direction is:', e.detail.mouse.direction);
     });
+    document.getElementById('mousespeedslow').addEventListener('mouseidle', function (e) {
+      console.log('mouse is idling over target');
+    });
     document.getElementById('mousespeedslow').addEventListener('mouseout', function (e) {
       e.currentTarget.classList.remove('active');
     });
