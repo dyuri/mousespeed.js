@@ -1,0 +1,22 @@
+{
+  "name": "mousespeed.js",
+  "description": "Mouse speed based browser events (mouseoverslow and mousemoveslow) for a UX friendlier mouse over behavior.",
+  "main": "mousespeed.js",
+  "authors": [
+    "Gyuri Horak <dyuri@horak.hu>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mouse",
+    "speed",
+    "mouseover"
+  ],
+  "homepage": "https://bitbucket.org/dyuri/mousespeed.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
