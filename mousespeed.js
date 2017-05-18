@@ -102,6 +102,8 @@
   };
 
   document.addEventListener("mousemove", function(e) {
+    mouse.stayEl = e.target;
+    mouse.lastStayEl = null;
     mouse.lastX = mouse.x;
     mouse.lastY = mouse.y;
     mouse.x = e.pageX;
@@ -161,6 +163,19 @@
           }
         });
         mouse.overEl.dispatchEvent(moveevent);
+      }
+
+      if (mouse.speed === 0 && mouse.lastStayEl !== mouse.stayEl) {
+        mouse.lastStayEl = mouse.stayEl;
+
+        var stayevent = new CustomEvent("mouseidle", {
+          bubbles: true,
+          cancelable: true,
+          detail: {
+            mouse: mouse
+          }
+        });
+        mouse.stayEl.dispatchEvent(stayevent);
       }
     }
 
