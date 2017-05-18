@@ -82,8 +82,11 @@
     );
 
     // classic approach with custom mouseslow event
-    document.getElementById('mousespeedslow').addEventListener('mouseslow', function (e) {
+    document.getElementById('mousespeedslow').addEventListener('mouseoverslow', function (e) {
       e.currentTarget.classList.add('active');
+    });
+    document.getElementById('mousespeedslow').addEventListener('mousemoveslow', function (e) {
+      console.log('mouse is slow over target, direction is:', e.detail.mouse.direction);
     });
     document.getElementById('mousespeedslow').addEventListener('mouseout', function (e) {
       e.currentTarget.classList.remove('active');
