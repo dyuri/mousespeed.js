@@ -12,7 +12,7 @@
   })();
 
   // CustomEvent polyfill
-  if (!window.CustomEvent) {
+  if (!window.CustomEvent || typeof window.CustomEvent !== 'function') {
     try {
       (function () {
         function CustomEvent (event, params) {
