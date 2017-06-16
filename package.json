@@ -1,6 +1,6 @@
 {
   "name": "mousespeed.js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Mouse speed based browser events (mouseoverslow and mousemoveslow) for a UX friendlier mouse over behavior.",
   "main": "mousespeed.js",
   "homepage": "https://bitbucket.org/dyuri/mousespeed.js",
